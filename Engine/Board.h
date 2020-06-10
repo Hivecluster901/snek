@@ -16,6 +16,7 @@ public:
 	};
 public:
 	Board( Graphics& gfx, int dimension, int width, int height );
+	~Board();
 	void DrawCell( const Location& loc,Color c );
 	int GetGridWidth() const;
 	int GetGridHeight() const;

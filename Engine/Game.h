@@ -47,6 +47,11 @@ private:
 		this->nPoison = nPoison;
 		this->nFood = nFood;
 	}
+	void DestroyBoard()
+	{
+		delete pBrd;
+		pBrd = nullptr;
+	}
 	/********************************/
 private:
 	MainWindow& wnd;

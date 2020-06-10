@@ -18,6 +18,12 @@ Board::Board( Graphics& gfx, int dimension, int width, int height)
 	}
 }
 
+Board::~Board()
+{
+	delete[] pContents;
+	pContents = nullptr;
+}
+
 void Board::DrawCell( const Location & loc,Color c )
 {
 	assert( loc.x >= 0 );
