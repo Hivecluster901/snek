@@ -41,9 +41,11 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
-	void CreateBoard(int dimension, int width, int height)
+	void CreateBoard(int dimension, int width, int height, int nPoison, int nFood)
 	{
 		pBrd = new Board(gfx, dimension, width, height);
+		this->nPoison = nPoison;
+		this->nFood = nFood;
 	}
 	/********************************/
 private:
@@ -63,8 +65,8 @@ private:
 	SoundEffect sndFart = SoundEffect( { L"Sounds\\Fart.wav" } );
 	static constexpr float snekMovePeriodMin = 0.040f;
 	static constexpr float snekMovePeriodSpeedup = 0.15f;
-	static constexpr int nPoison = 240;
-	static constexpr int nFood = 12;
+	int nPoison;
+	int nFood;
 	float snekMovePeriod = 0.4f;
 	float snekMoveCounter = 0.0f;
 	static constexpr float snekSpeedupFactor = 0.93f;

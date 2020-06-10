@@ -29,7 +29,7 @@ Game::Game( MainWindow& wnd )
 	rng( std::random_device()() ),
 	snek( {2,2} )
 {
-	CreateBoard(20, 20, 20);
+	CreateBoard(20, 20, 20, 20 , 120);
 	for( int i = 0; i < nPoison; i++ )
 	{
 		pBrd->SpawnContents( rng,snek,Board::CellContents::Poison );
