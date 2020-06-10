@@ -41,13 +41,17 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
+	void CreateBoard(int dimension, int width, int height)
+	{
+		pBrd = new Board(gfx, dimension, width, height);
+	}
 	/********************************/
 private:
 	MainWindow& wnd;
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	Board brd;
+	Board* pBrd = nullptr;
 	Snake snek;
 	Location delta_loc = {1,0};
 	std::mt19937 rng;

@@ -26,17 +26,17 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	brd( gfx ),
 	rng( std::random_device()() ),
 	snek( {2,2} )
 {
+	CreateBoard(20, 20, 20);
 	for( int i = 0; i < nPoison; i++ )
 	{
-		brd.SpawnContents( rng,snek,Board::CellContents::Poison );
+		pBrd->SpawnContents( rng,snek,Board::CellContents::Poison );
 	}
 	for( int i = 0; i < nFood; i++ )
 	{
-		brd.SpawnContents( rng,snek,Board::CellContents::Food );
+		pBrd->SpawnContents( rng,snek,Board::CellContents::Food );
 	}
 	sndTitle.Play( 1.0f,1.0f );
 }
@@ -85,8 +85,8 @@ void Game::UpdateModel()
 			{
 				snekMoveCounter -= snekModifiedMovePeriod;
 				const Location next = snek.GetNextHeadLocation( delta_loc );
-				const Board::CellContents contents = brd.GetContents( next );
-				if( !brd.IsInsideBoard( next ) ||
+				const Board::CellContents contents = pBrd->GetContents( next );
+				if( !pBrd->IsInsideBoard( next ) ||
 					snek.IsInTileExceptEnd( next ) ||
 					contents == Board::CellContents::Obstacle )
 				{
@@ -97,15 +97,15 @@ void Game::UpdateModel()
 				else if( contents == Board::CellContents::Food )
 				{
 					snek.GrowAndMoveBy( delta_loc );
-					brd.ConsumeContents( next );
-					brd.SpawnContents( rng,snek,Board::CellContents::Obstacle );
-					brd.SpawnContents( rng,snek,Board::CellContents::Food );
+					pBrd->ConsumeContents( next );
+					pBrd->SpawnContents( rng,snek,Board::CellContents::Obstacle );
+					pBrd->SpawnContents( rng,snek,Board::CellContents::Food );
 					sfxEat.Play( rng,0.8f );
 				}
 				else if( contents == Board::CellContents::Poison )
 				{
 					snek.MoveBy( delta_loc );
-					brd.ConsumeContents( next );
+					pBrd->ConsumeContents( next );
 					snekMovePeriod = std::max( snekMovePeriod * snekSpeedupFactor,snekMovePeriodMin );
 					sndFart.Play( rng,0.6f );
 				}
@@ -131,13 +131,13 @@ void Game::ComposeFrame()
 {
 	if( gameIsStarted )
 	{
-		snek.Draw( brd );
-		brd.DrawCells();
+		snek.Draw( *pBrd );
+		pBrd->DrawCells();
 		if( gameIsOver )
 		{
 			SpriteCodex::DrawGameOver( 350,265,gfx );
 		}
-		brd.DrawBorder();
+		pBrd->DrawBorder();
 	}
 	else
 	{

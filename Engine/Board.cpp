@@ -2,10 +2,21 @@
 #include "Snake.h"
 #include <assert.h>
 
-Board::Board( Graphics& gfx )
+Board::Board( Graphics& gfx, int dimension, int width, int height)
 	:
-	gfx( gfx )
-{}
+	gfx( gfx ),
+	dimension(dimension),
+	width(width),
+	height(height),
+	x(Graphics::ScreenWidth / 2 - width * dimension /2),
+	y(Graphics::ScreenHeight /2 - height * dimension /2),
+	pContents(new CellContents[width* height])
+{
+	for (int i = 0; i < width * height; i++)
+	{
+		pContents[i] = CellContents::Empty;
+	}
+}
 
 void Board::DrawCell( const Location & loc,Color c )
 {
@@ -38,14 +49,14 @@ bool Board::IsInsideBoard( const Location & loc ) const
 
 Board::CellContents Board::GetContents( const Location& loc ) const
 {
-	return contents[loc.y * width + loc.x];
+	return pContents[loc.y * width + loc.x];
 }
 
 void Board::ConsumeContents( const Location& loc )
 {
 	assert( GetContents( loc ) == CellContents::Food 
 			|| GetContents( loc ) == CellContents::Poison );
-	contents[loc.y * width + loc.x] = CellContents::Empty;
+	pContents[loc.y * width + loc.x] = CellContents::Empty;
 }
 
 void Board::SpawnContents( std::mt19937 & rng,const Snake & snake,CellContents contentsType )
@@ -61,7 +72,7 @@ void Board::SpawnContents( std::mt19937 & rng,const Snake & snake,CellContents c
 	}
 	while( snake.IsInTile( newLoc ) || GetContents( newLoc ) != CellContents::Empty );
 
-	contents[newLoc.y * width + newLoc.x] = contentsType;
+	pContents[newLoc.y * width + newLoc.x] = contentsType;
 }
 
 void Board::DrawBorder()
