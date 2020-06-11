@@ -28,6 +28,8 @@
 #include <random>
 #include "SoundEffect.h"
 #include "FrameTimer.h"
+#include <fstream>
+#include <string>
 
 class Game
 {
@@ -41,17 +43,18 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
-	void CreateBoard(int dimension, int width, int height, int nPoison, int nFood)
+	/*void CreateBoard(int dimension, int width, int height, int nPoison, int nFood)
 	{
 		pBrd = new Board(gfx, dimension, width, height);
 		this->nPoison = nPoison;
 		this->nFood = nFood;
-	}
+	}*/
 	void DestroyBoard()
 	{
 		delete pBrd;
 		pBrd = nullptr;
 	}
+	void CreateBoard2();
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -74,7 +77,7 @@ private:
 	int nFood;
 	float snekMovePeriod = 0.4f;
 	float snekMoveCounter = 0.0f;
-	static constexpr float snekSpeedupFactor = 0.93f;
+	float snekSpeedupFactor;
 	bool gameIsOver = false;
 	bool gameIsStarted = false;
 	/********************************/

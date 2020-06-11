@@ -29,7 +29,7 @@ Game::Game( MainWindow& wnd )
 	rng( std::random_device()() ),
 	snek( {2,2} )
 {
-	CreateBoard(20, 20, 20, 20 , 120);
+	CreateBoard2();
 	for( int i = 0; i < nPoison; i++ )
 	{
 		pBrd->SpawnContents( rng,snek,Board::CellContents::Poison );
@@ -125,6 +125,56 @@ void Game::UpdateModel()
 			gameIsStarted = true;
 		}
 	}
+}
+
+void Game::CreateBoard2()
+{
+	std::ifstream in("Config.txt");
+	std::string str;
+
+	int width;
+	int height;
+	int nPoison;
+	int nFood;
+	int dimension;
+	float speedupRate;
+
+	while (!in.eof())
+	{
+		std::getline(in, str);
+
+		if (str == "[Tile Size]")
+		{
+			std::getline(in, str);
+			dimension = std::stoi(str);
+		}
+		else if (str == "[Board Size]")
+		{
+			std::getline(in, str);
+			int whiteSpace = (int)str.find(" ");
+			width = std::stoi(str.substr(0, whiteSpace));
+			height = std::stoi(str.substr(whiteSpace + 1, str.size()));
+		}
+		else if (str == "[Speedup Rate]")
+		{
+			std::getline(in, str);
+			speedupRate = std::stof(str);
+		}
+		else if (str == "[Poison Amount]")
+		{
+			std::getline(in, str);
+			nPoison = std::stoi(str);
+		}
+		else if (str == "[Goal Amount]")
+		{
+			std::getline(in, str);
+			nFood = std::stoi(str);
+		}
+	}
+	pBrd = new Board(gfx, dimension, width, height);
+	this->nPoison = nPoison;
+	this->nFood = nFood;
+	this->snekSpeedupFactor = 2 - speedupRate;
 }
 
 void Game::ComposeFrame()
