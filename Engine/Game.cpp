@@ -27,16 +27,20 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd ),
 	rng( std::random_device()() ),
-	snek( {2,2} )
+	snek( {2,2} ),
+	settings("Config.txt"),
+	Brd(gfx, settings),
+	nFood(settings.GetFoodNum()),
+	nPoison(settings.GetPoisonNum()),
+	snekSpeedupFactor(settings.GetSpeedupFactor())
 {
-	CreateBoard2();
 	for( int i = 0; i < nPoison; i++ )
 	{
-		pBrd->SpawnContents( rng,snek,Board::CellContents::Poison );
+		Brd.SpawnContents( rng,snek,Board::CellContents::Poison );
 	}
 	for( int i = 0; i < nFood; i++ )
 	{
-		pBrd->SpawnContents( rng,snek,Board::CellContents::Food );
+		Brd.SpawnContents( rng,snek,Board::CellContents::Food );
 	}
 	sndTitle.Play( 1.0f,1.0f );
 }
@@ -85,8 +89,8 @@ void Game::UpdateModel()
 			{
 				snekMoveCounter -= snekModifiedMovePeriod;
 				const Location next = snek.GetNextHeadLocation( delta_loc );
-				const Board::CellContents contents = pBrd->GetContents( next );
-				if( !pBrd->IsInsideBoard( next ) ||
+				const Board::CellContents contents = Brd.GetContents( next );
+				if( !Brd.IsInsideBoard( next ) ||
 					snek.IsInTileExceptEnd( next ) ||
 					contents == Board::CellContents::Obstacle )
 				{
@@ -97,15 +101,15 @@ void Game::UpdateModel()
 				else if( contents == Board::CellContents::Food )
 				{
 					snek.GrowAndMoveBy( delta_loc );
-					pBrd->ConsumeContents( next );
-					pBrd->SpawnContents( rng,snek,Board::CellContents::Obstacle );
-					pBrd->SpawnContents( rng,snek,Board::CellContents::Food );
+					Brd.ConsumeContents( next );
+					Brd.SpawnContents( rng,snek,Board::CellContents::Obstacle );
+					Brd.SpawnContents( rng,snek,Board::CellContents::Food );
 					sfxEat.Play( rng,0.8f );
 				}
 				else if( contents == Board::CellContents::Poison )
 				{
 					snek.MoveBy( delta_loc );
-					pBrd->ConsumeContents( next );
+					Brd.ConsumeContents( next );
 					snekMovePeriod = std::max( snekMovePeriod * snekSpeedupFactor,snekMovePeriodMin );
 					sndFart.Play( rng,0.6f );
 				}
@@ -127,67 +131,18 @@ void Game::UpdateModel()
 	}
 }
 
-void Game::CreateBoard2()
-{
-	std::ifstream in("Config.txt");
-	std::string str;
-
-	int width;
-	int height;
-	int nPoison;
-	int nFood;
-	int dimension;
-	float speedupRate;
-
-	while (!in.eof())
-	{
-		std::getline(in, str);
-
-		if (str == "[Tile Size]")
-		{
-			std::getline(in, str);
-			dimension = std::stoi(str);
-		}
-		else if (str == "[Board Size]")
-		{
-			std::getline(in, str);
-			int whiteSpace = (int)str.find(" ");
-			width = std::stoi(str.substr(0, whiteSpace));
-			height = std::stoi(str.substr(whiteSpace + 1, str.size()));
-		}
-		else if (str == "[Speedup Rate]")
-		{
-			std::getline(in, str);
-			speedupRate = std::stof(str);
-		}
-		else if (str == "[Poison Amount]")
-		{
-			std::getline(in, str);
-			nPoison = std::stoi(str);
-		}
-		else if (str == "[Goal Amount]")
-		{
-			std::getline(in, str);
-			nFood = std::stoi(str);
-		}
-	}
-	pBrd = new Board(gfx, dimension, width, height);
-	this->nPoison = nPoison;
-	this->nFood = nFood;
-	this->snekSpeedupFactor = 2 - speedupRate;
-}
 
 void Game::ComposeFrame()
 {
 	if( gameIsStarted )
 	{
-		snek.Draw( *pBrd );
-		pBrd->DrawCells();
+		snek.Draw( Brd );
+		Brd.DrawCells();
 		if( gameIsOver )
 		{
 			SpriteCodex::DrawGameOver( 350,265,gfx );
 		}
-		pBrd->DrawBorder();
+		Brd.DrawBorder();
 	}
 	else
 	{

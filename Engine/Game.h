@@ -43,25 +43,14 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
-	/*void CreateBoard(int dimension, int width, int height, int nPoison, int nFood)
-	{
-		pBrd = new Board(gfx, dimension, width, height);
-		this->nPoison = nPoison;
-		this->nFood = nFood;
-	}*/
-	void DestroyBoard()
-	{
-		delete pBrd;
-		pBrd = nullptr;
-	}
-	void CreateBoard2();
 	/********************************/
 private:
 	MainWindow& wnd;
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	Board* pBrd = nullptr;
+	GameSettings settings;
+	Board Brd;
 	Snake snek;
 	Location delta_loc = {1,0};
 	std::mt19937 rng;

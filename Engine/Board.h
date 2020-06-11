@@ -3,6 +3,7 @@
 #include "Graphics.h"
 #include "Location.h"
 #include <random>
+#include "GameSettings.h"
 
 class Board
 {
@@ -15,7 +16,7 @@ public:
 		Poison
 	};
 public:
-	Board( Graphics& gfx, int dimension, int width, int height );
+	Board( Graphics& gfx, const GameSettings& settings );
 	~Board();
 	void DrawCell( const Location& loc,Color c );
 	int GetGridWidth() const;

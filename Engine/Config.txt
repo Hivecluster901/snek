@@ -8,7 +8,7 @@
 32 24
 
 [Speedup Rate]
-1.05
+0.93
 
 [Poison Amount]
 200

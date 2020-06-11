@@ -2,12 +2,12 @@
 #include "Snake.h"
 #include <assert.h>
 
-Board::Board( Graphics& gfx, int dimension, int width, int height)
+Board::Board( Graphics& gfx, const GameSettings& settings)
 	:
 	gfx( gfx ),
-	dimension(dimension),
-	width(width),
-	height(height),
+	dimension(settings.GetDimension()),
+	width(settings.GetWidth()),
+	height(settings.GetHeight()),
 	x(Graphics::ScreenWidth / 2 - width * dimension /2),
 	y(Graphics::ScreenHeight /2 - height * dimension /2),
 	pContents(new CellContents[width* height])
